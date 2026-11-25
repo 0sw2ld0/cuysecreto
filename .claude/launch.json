@@ -1,6 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "cuysecreto-web", "runtimeExecutable": "node", "runtimeArgs": ["dev/serve.mjs"], "port": 5173 }
+    { "name": "cuysecreto-web", "runtimeExecutable": "node", "runtimeArgs": ["dev/serve.mjs"], "port": 5173 },
+    { "name": "cuysecreto-web-local", "runtimeExecutable": "env", "runtimeArgs": ["LOCAL_API=1", "PORT=5174", "node", "dev/serve.mjs"], "port": 5174 }
   ]
 }

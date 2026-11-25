@@ -217,6 +217,13 @@ function viewCreate() {
           <select name="currency">${Object.entries(CURRENCY_SYMBOL).map(([k, v]) => `<option value="${k}">${v} · ${k}</option>`).join("")}</select></label>
       </div>
       <label class="field"><span>Fecha del intercambio <em>(opcional)</em></span><input type="date" name="date"></label>
+      <fieldset class="field" style="border:0;padding:0;margin:0 0 14px"><span style="font-size:14px;font-weight:700;margin-bottom:6px;display:block">¿Cómo van a sortear?</span>
+        <div class="prio-pick two">
+          <label><input type="radio" name="mode" value="app" checked><span>La app sortea en secreto</span></label>
+          <label><input type="radio" name="mode" value="manual"><span>Ya sorteamos a mano</span></label>
+        </div>
+        <span class="mode-hint" id="mode-hint">Nadie, ni tú, verá quién le tocó a quién.</span>
+      </fieldset>
       <label class="field"><span>Nota para el grupo <em>(opcional)</em></span>
         <input name="note" maxlength="300" placeholder="En casa de la abuela, 8 p. m." autocomplete="off"></label>
 
@@ -237,6 +244,11 @@ function viewCreate() {
   const input = form.querySelector("#new-name");
   const err = form.querySelector("#create-err");
   form.currency.onchange = () => (form.querySelector("#cur-sym").textContent = CURRENCY_SYMBOL[form.currency.value]);
+  form.querySelectorAll('input[name="mode"]').forEach((r) => (r.onchange = () => {
+    form.querySelector("#mode-hint").textContent = form.mode.value === "manual"
+      ? "La app solo guarda las listas de deseos, y cada uno ve las de todos."
+      : "Nadie, ni tú, verá quién le tocó a quién.";
+  }));
 
   const draw = () => {
     chips.innerHTML = names.map((n, i) => `<span class="chip">${esc(n)}<button type="button" data-i="${i}" aria-label="Quitar a ${esc(n)}">${icon("x")}</button></span>`).join("");
@@ -271,6 +283,7 @@ function viewCreate() {
         p_name: name, p_budget: budget ? Number(budget) : null, p_currency: form.currency.value,
         p_exchange_date: form.date.value || null, p_note: form.note.value.trim() || null, p_participants: names,
       });
+      if (form.mode.value === "manual") await rpc("cs_admin_set_draw_mode", { p_code: r.code, p_token: r.admin_token, p_mode: "manual" });
       setAdmin(r.code, { token: r.admin_token, eventName: name });
       toast("¡Grupo creado!");
       go(`#/admin/${r.code}/${r.admin_token}`);
@@ -347,7 +360,7 @@ async function viewAdmin(code, token) {
           <button class="btn btn-light btn-sm" aria-label="Agregar">${icon("plus")}</button></form>` : ""}
       </div>
 
-      <details class="more" ${data.exclusions.length ? "open" : ""}>
+      ${ev.draw_mode === "manual" ? "" : `<details class="more" ${data.exclusions.length ? "open" : ""}>
         <summary>Parejas que no deben tocarse${data.exclusions.length ? ` (${data.exclusions.length})` : ""}</summary>
         <div class="panel">
           <p class="note">Útil para parejas o hermanos que ya se regalan entre sí. Funciona en ambos sentidos.</p>
@@ -358,10 +371,15 @@ async function viewAdmin(code, token) {
             <select name="b" aria-label="Segunda persona">${ppl.map((p, i) => `<option value="${p.id}" ${i === 1 ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select>
             <button class="btn btn-light btn-sm" aria-label="Agregar exclusión">${icon("plus")}</button></form>` : ""}
         </div>
-      </details>
+      </details>`}
 
       <section class="draw-box">
-        ${ev.drawn ? `
+        ${ev.draw_mode === "manual" ? `
+          <div class="hang"><div class="tag">
+            <p class="hand" style="font-size:34px;margin:0 0 8px">Sorteo hecho a mano</p>
+            <p class="hint">La app no sortea en este grupo. Cada persona entra con su PIN, arma su lista y ve las listas de todos.</p>
+            <button class="btn btn-ghost block" data-act="mode-app">Mejor que sortee la app</button>
+          </div></div>` : ev.drawn ? `
           <div class="hang"><div class="tag">
             <p class="hand" style="font-size:34px;margin:0 0 8px">¡Sorteo hecho!</p>
             <p class="hint">Cada persona ya puede entrar y ver a quién le tocó. Tú tampoco puedes ver las parejas.</p>
@@ -370,7 +388,8 @@ async function viewAdmin(code, token) {
           ${confirmDraw ? `<div class="confirm"><p>Se sortearán ${ppl.length} personas${data.exclusions.length ? ` respetando ${data.exclusions.length} ${data.exclusions.length === 1 ? "exclusión" : "exclusiones"}` : ""}. Nadie, ni tú, verá las parejas.</p>
             <div class="row-btns"><button class="btn btn-primary" data-act="draw-yes">Sortear ahora</button><button class="btn btn-ghost" data-act="draw-no">Todavía no</button></div></div>`
           : `<button class="btn btn-primary block" data-act="draw" ${ppl.length < 3 ? "disabled" : ""}>${icon("gift")} Hacer el sorteo</button>
-             <p class="event-note" style="text-align:center">${ppl.length < 3 ? "Necesitas al menos 3 personas." : "Puedes sortear aunque no todos hayan entrado todavía."}</p>`}`}
+             <p class="event-note" style="text-align:center">${ppl.length < 3 ? "Necesitas al menos 3 personas." : "Puedes sortear aunque no todos hayan entrado todavía."}</p>
+             <button class="btn btn-ghost block" style="margin-top:14px" data-act="mode-manual">¿Ya sortearon a mano? Usar solo las listas</button>`}`}
       </section>
 
       <details class="more">
@@ -408,6 +427,8 @@ async function viewAdmin(code, token) {
       if (act === "draw-no") { confirmDraw = false; paint(); }
       if (act === "draw-yes") { confirmDraw = false; call("cs_admin_draw", {}, b, "¡Sorteo hecho!"); }
       if (act === "undo") call("cs_admin_undo_draw", {}, b, "Sorteo deshecho");
+      if (act === "mode-manual") call("cs_admin_set_draw_mode", { p_mode: "manual" }, b, "Listo: cada uno verá las listas de todos");
+      if (act === "mode-app") call("cs_admin_set_draw_mode", { p_mode: "app" }, b, "Ahora la app hará el sorteo");
     };
     const addP = $main.querySelector("#add-p");
     if (addP) addP.onsubmit = (e) => { e.preventDefault(); const n = addP.n.value.trim(); if (n) call("cs_admin_add_participant", { p_name: n }, addP.querySelector("button"), `${n} agregado`); };
@@ -553,7 +574,16 @@ async function viewMe(code) {
   }
   setSession(code, { ...sess, eventName: data.event.name });
 
-  let tab = data.revealed ? "them" : "mine";
+  const isManual = () => data.event.draw_mode === "manual";
+  const GIFT_KEY = `cuysecreto:giftTo:${code}`;
+  let giftTo = null; // a quién le regalo (sorteo a mano): solo se guarda en este celular
+  try { giftTo = localStorage.getItem(GIFT_KEY); } catch { /* modo privado */ }
+  let group = [];
+  const loadGroup = async () => { group = isManual() ? await rpc("cs_group_wishes", { p_token: sess.token }) : []; };
+  try { await loadGroup(); } catch { group = []; }
+  if (giftTo && !group.some((g) => g.id === giftTo)) giftTo = null;
+  let viewing = giftTo;
+  let tab = isManual() ? "group" : data.revealed ? "them" : "mine";
   let editing = null; // null | "new" | wish id
   let justRevealed = false;
   let painted = false;
@@ -602,8 +632,15 @@ async function viewMe(code) {
     const r = data.receiver;
     const wishes = me.wishes;
     const flipped = data.revealed;
+    const manual = isManual();
+    const gift = group.find((g) => g.id === giftTo);
     let next = "";
-    if (!ev.drawn) {
+    if (manual) {
+      next = wishes.length === 0
+        ? `<button class="btn btn-primary block" data-act="new">${icon("plus")} Arma tu lista de deseos</button>`
+        : !gift ? `<button class="btn btn-primary block" data-act="choose">${icon("gift")} Elige a quién le regalas</button>`
+        : gift.wishes.length ? `<button class="btn btn-primary block" data-act="see-list">${icon("store")} Ver qué quiere ${esc(gift.name)}</button>` : "";
+    } else if (!ev.drawn) {
       next = wishes.length === 0
         ? `<button class="btn btn-primary block" data-act="new">${icon("plus")} Armar mi lista de deseos</button>
            <div class="wait-note">${icon("gift")}<span>El organizador todavía no sortea. Mientras, arma tu lista para que tu amigo secreto sepa qué regalarte.</span></div>`
@@ -621,6 +658,17 @@ async function viewMe(code) {
       ? `<div class="wishes">${r.wishes.map((w) => wishRow(w, ev, false)).join("")}</div>`
       : `<div class="empty"><b>${esc(r.name)} todavía no arma su lista</b>Vuelve en unos días; aquí aparecerán sus deseos con tienda y precio.</div>`) : "";
 
+    const sel = group.find((g) => g.id === viewing) || gift || group[0];
+    const groupList = group.length ? `
+      <div class="people-pick" role="group" aria-label="Elige de quién ver la lista">
+        ${group.map((g) => `<button class="pick ${sel && g.id === sel.id ? "on" : ""}" data-view="${g.id}" aria-pressed="${sel && g.id === sel.id}">${g.id === giftTo ? icon("gift") : ""}<span>${esc(g.name)}</span><small>${g.wishes.length}</small></button>`).join("")}
+      </div>
+      ${sel ? `<div class="pick-head"><h3 class="hand">${esc(sel.name)}</h3>
+          <button class="btn btn-sm ${sel.id === giftTo ? "btn-ghost" : "btn-light"}" data-act="gift-to" data-id="${sel.id}">${sel.id === giftTo ? "Ya no le regalo" : `${icon("gift")} Le regalo yo`}</button></div>
+        ${sel.wishes.length ? `<div class="wishes">${sel.wishes.map((w) => wishRow(w, ev, false)).join("")}</div>`
+          : `<div class="empty"><b>${esc(sel.name)} todavía no arma su lista</b>Vuelve en unos días; aquí aparecerán sus deseos con tienda y precio.</div>`}` : ""}`
+      : `<div class="empty"><b>Todavía no hay nadie más</b>Cuando el organizador agregue a los demás, aquí verás sus listas.</div>`;
+
     const myList = `
       ${editing === "new" ? wishForm() : ""}
       ${wishes.length ? `<div class="wishes">${wishes.map((w) => (editing === w.id ? wishForm(w) : wishRow(w, ev, true))).join("")}</div>`
@@ -631,6 +679,13 @@ async function viewMe(code) {
       <h1>${esc(ev.name)}</h1>
       ${eventSeg({ ...ev, group_size: data.group_size })}
 
+      ${manual ? `
+      <div class="hang" style="margin-top:8px"><div class="tag">
+        <p class="tag-line"><span class="printed">De:</span> <span class="hand">${esc(me.name)}</span></p>
+        <p class="tag-line big"><span class="printed">Para:</span> ${gift ? `<span class="hand">${esc(gift.name)}</span>` : `<span class="hand q" aria-label="Sin elegir">¿ ? ? ?</span>`}</p>
+        ${gift && (ev.budget != null || ev.exchange_date) ? `<p class="hint" style="margin:0 0 14px;color:var(--ink);font-size:16px">Regálale algo${ev.budget != null ? ` de hasta <b>${esc(money(ev.budget, ev.currency))}</b>` : ""}${ev.exchange_date ? ` para el <b>${esc(longDate(ev.exchange_date))}</b>` : ""}.</p>` : ""}
+        <div class="tag-foot">${icon("lock")}<span>${gift ? "Solo se guarda en este celular; nadie más lo ve." : "Sortearon a mano: elige abajo a quién le regalas."}</span></div>
+      </div></div>` : `
       <div class="hang reveal-wrap ${justRevealed ? "swing" : ""}" style="margin-top:8px">
         <div class="flip ${flipped ? "is-flipped" : ""}" id="flip">
           <div class="tag front-face" ${flipped ? 'aria-hidden="true"' : ""}>
@@ -645,10 +700,16 @@ async function viewMe(code) {
             <div class="tag-foot">${icon("lock")}<span>Es secreto: no se lo cuentes a nadie.</span></div>
           </div>
         </div>
-      </div>
+      </div>`}
       <div class="next-step stack">${next}</div>
 
-      ${flipped ? `
+      ${manual ? `
+        <div class="tabs" role="tablist" aria-label="Listas de deseos">
+          <button role="tab" id="t-group" aria-controls="p-list" aria-selected="${tab === "group"}" data-tab="group">Listas del grupo</button>
+          <button role="tab" id="t-mine" aria-controls="p-list" aria-selected="${tab === "mine"}" data-tab="mine">Mi lista</button>
+        </div>
+        <section id="p-list" role="tabpanel" aria-labelledby="${tab === "group" ? "t-group" : "t-mine"}">${tab === "group" ? groupList : myList}</section>`
+      : flipped ? `
         <div class="tabs" role="tablist" aria-label="Listas de deseos">
           <button role="tab" id="t-them" aria-controls="p-list" aria-selected="${tab === "them"}" data-tab="them">Lista de ${esc(r.name)}</button>
           <button role="tab" id="t-mine" aria-controls="p-list" aria-selected="${tab === "mine"}" data-tab="mine">Mi lista</button>
@@ -698,6 +759,8 @@ async function viewMe(code) {
   };
 
   $main.onclick = async (e) => {
+    const v = e.target.closest("[data-view]");
+    if (v) { viewing = v.dataset.view; paint(); $main.querySelector(`[data-view="${viewing}"]`).focus(); return; }
     const t = e.target.closest("[data-tab]");
     if (t) { tab = t.dataset.tab; editing = null; paint(); $main.querySelector(`[data-tab="${tab}"]`).focus(); return; }
     const b = e.target.closest("[data-act]");
@@ -713,7 +776,7 @@ async function viewMe(code) {
     }
     if (act === "refresh") {
       busy(b, true, "Revisando…");
-      try { data = await rpc("cs_me", { p_token: sess.token }); toast(data.event.drawn ? "¡Ya sortearon!" : "Todavía no sortean"); paint(); }
+      try { data = await rpc("cs_me", { p_token: sess.token }); await loadGroup(); toast(isManual() ? "Listas actualizadas" : data.event.drawn ? "¡Ya sortearon!" : "Todavía no sortean"); paint(); }
       catch (ex) { toast(ex.message); busy(b, false); }
     }
     if (act === "reveal") {
@@ -721,7 +784,17 @@ async function viewMe(code) {
       try { data = await rpc("cs_reveal", { p_token: sess.token }); justRevealed = true; tab = "them"; paint(); }
       catch (ex) { toast(ex.message); busy(b, false); }
     }
-    if (act === "see-list") { tab = "them"; paint(); $main.querySelector(".tabs").scrollIntoView({ behavior: "smooth", block: "start" }); }
+    if (act === "see-list" || act === "choose") {
+      tab = isManual() ? "group" : "them";
+      if (isManual() && giftTo) viewing = giftTo;
+      paint(); $main.querySelector(".tabs").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    if (act === "gift-to") {
+      giftTo = giftTo === b.dataset.id ? null : b.dataset.id;
+      try { giftTo ? localStorage.setItem(GIFT_KEY, giftTo) : localStorage.removeItem(GIFT_KEY); } catch { /* modo privado */ }
+      toast(giftTo ? "Guardado en este celular" : "Listo, ya no está marcado");
+      paint();
+    }
     if (act === "copy-code") copy(code, "Código copiado");
     if (act === "logout") {
       try { await rpc("cs_logout", { p_token: sess.token }); } catch { /* igual salimos */ }

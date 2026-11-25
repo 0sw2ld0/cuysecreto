@@ -30,6 +30,13 @@ create table if not exists public.cs_events (
   created_at     timestamptz not null default now()
 );
 
+-- Modo de sorteo: 'app' (la app sortea y guarda el secreto) o 'manual' (el grupo ya sorteó
+-- por su cuenta; la app solo sirve para las listas de deseos y todos ven las de todos).
+alter table public.cs_events add column if not exists draw_mode text not null default 'app';
+do $$ begin
+  alter table public.cs_events add constraint cs_events_draw_mode_check check (draw_mode in ('app','manual'));
+exception when duplicate_object then null; end $$;
+
 create table if not exists public.cs_participants (
   id              uuid primary key default gen_random_uuid(),
   event_id        uuid not null references public.cs_events(id) on delete cascade,
@@ -141,7 +148,7 @@ language sql stable as $$
   select json_build_object(
     'code', e.code, 'name', e.name, 'budget', e.budget, 'currency', e.currency,
     'exchange_date', e.exchange_date, 'note', e.note, 'drawn', e.drawn_at is not null,
-    'drawn_at', e.drawn_at)
+    'drawn_at', e.drawn_at, 'draw_mode', e.draw_mode)
 $$;
 
 -- ───────────────────────── Organizador ─────────────────────────
@@ -229,6 +236,24 @@ begin
   return cs_admin_get(p_code, p_token);
 end $$;
 
+-- Cambia entre sorteo en la app y sorteo hecho a mano. No se puede pasar a manual si la app
+-- ya sorteó (habría resultados guardados que nadie usaría).
+create or replace function public.cs_admin_set_draw_mode(p_code text, p_token text, p_mode text)
+returns json
+language plpgsql security definer set search_path = public, extensions as $$
+declare e cs_events;
+begin
+  e := cs__admin_event(p_code, p_token);
+  if p_mode not in ('app', 'manual') then
+    raise exception 'Modo de sorteo no válido' using errcode = 'P0001';
+  end if;
+  if e.drawn_at is not null and p_mode <> e.draw_mode then
+    raise exception 'La app ya hizo el sorteo. Deshazlo antes de cambiar a sorteo a mano.' using errcode = 'P0001';
+  end if;
+  update cs_events set draw_mode = p_mode where id = e.id;
+  return cs_admin_get(p_code, p_token);
+end $$;
+
 create or replace function public.cs_admin_add_participant(p_code text, p_token text, p_name text)
 returns json
 language plpgsql security definer set search_path = public, extensions as $$
@@ -306,6 +331,9 @@ declare
   e cs_events; ids uuid[]; n int; attempt int; ok boolean; i int; giver uuid; recv uuid;
 begin
   e := cs__admin_event(p_code, p_token);
+  if e.draw_mode = 'manual' then
+    raise exception 'Este grupo sorteó a mano; la app no sortea.' using errcode = 'P0001';
+  end if;
   if e.drawn_at is not null then
     raise exception 'El sorteo ya está hecho' using errcode = 'P0001';
   end if;
@@ -447,6 +475,22 @@ begin
   return cs_me(p_token);
 end $$;
 
+-- Grupos con sorteo a mano: cada participante (con su sesión) ve las listas de todos los demás.
+create or replace function public.cs_group_wishes(p_token text) returns json
+language plpgsql volatile security definer set search_path = public, extensions as $$
+declare p cs_participants; e cs_events;
+begin
+  p := cs__session(p_token);
+  select * into e from cs_events where id = p.event_id;
+  if e.draw_mode <> 'manual' then
+    raise exception 'En este grupo el sorteo es secreto: solo ves la lista de quien te tocó.' using errcode = 'P0001';
+  end if;
+  return (
+    select coalesce(json_agg(json_build_object('id', o.id, 'name', o.name, 'wishes', cs__wishes_json(o.id))
+           order by lower(o.name)), '[]'::json)
+      from cs_participants o where o.event_id = e.id and o.id <> p.id);
+end $$;
+
 create or replace function public.cs_wish_save(
   p_token text, p_id uuid, p_title text, p_note text, p_store text, p_url text,
   p_price numeric, p_priority smallint
@@ -510,6 +554,8 @@ grant execute on function
   public.cs_create_event(text, numeric, text, date, text, text[]),
   public.cs_admin_get(text, text),
   public.cs_admin_update_event(text, text, text, numeric, text, date, text),
+  public.cs_admin_set_draw_mode(text, text, text),
+  public.cs_group_wishes(text),
   public.cs_admin_add_participant(text, text, text),
   public.cs_admin_remove_participant(text, text, uuid),
   public.cs_admin_reset_pin(text, text, uuid),
