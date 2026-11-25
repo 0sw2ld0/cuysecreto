@@ -348,3 +348,14 @@ details.more[open] summary::before { content: "–"; }
 .pick.on svg.i { color: var(--ribbon-strong); }
 .pick-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
 .pick-head h3 { margin: 0; font-size: 32px; line-height: 1.1; overflow-wrap: anywhere; }
+
+.tabs.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* Interruptor del organizador */
+.switch-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 16px; margin-top: 26px; }
+.switch-row b { display: block; font-size: 17px; }
+.switch-row span { display: block; font-size: 15px; color: var(--ink-2); }
+.switch { flex: none; position: relative; width: 56px; height: 32px; border: 0; border-radius: 999px; background: var(--tag-edge); transition: background-color .2s; }
+.switch span { position: absolute; top: 4px; left: 4px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: var(--shadow-sm); transition: transform .25s var(--ease-out); }
+.switch[aria-checked="true"] { background: var(--ribbon-strong); }
+.switch[aria-checked="true"] span { transform: translateX(24px); }
+.switch:focus-visible { outline: 3px solid var(--ribbon-strong); outline-offset: 2px; }

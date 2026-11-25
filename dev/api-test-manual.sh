@@ -20,3 +20,13 @@ echo "volver a app y sortear, luego pasar a manual (debe fallar):"
 rpc cs_admin_set_draw_mode "{\"p_code\":\"$CODE\",\"p_token\":\"$ADM\",\"p_mode\":\"app\"}" >/dev/null
 rpc cs_admin_draw "{\"p_code\":\"$CODE\",\"p_token\":\"$ADM\"}" | j .event.drawn
 rpc cs_admin_set_draw_mode "{\"p_code\":\"$CODE\",\"p_token\":\"$ADM\",\"p_mode\":\"manual\"}" | j .message
+echo "--- listas para todos (sorteo en la app) ---"
+C2=$(rpc cs_create_event '{"p_name":"Publicas Test","p_budget":null,"p_currency":"PEN","p_exchange_date":null,"p_note":null,"p_participants":["Uno","Dos","Tres"]}')
+CODE2=$(echo "$C2" | j .code); ADM2=$(echo "$C2" | j .admin_token)
+U=$(rpc cs_event_public "{\"p_code\":\"$CODE2\"}" | j ".participants.find(x=>x.name==='Uno').id")
+TU=$(rpc cs_join "{\"p_code\":\"$CODE2\",\"p_participant\":\"$U\",\"p_pin\":\"3333\"}" | j .token)
+rpc cs_admin_draw "{\"p_code\":\"$CODE2\",\"p_token\":\"$ADM2\"}" >/dev/null
+echo "apagado (debe fallar):"; rpc cs_group_wishes "{\"p_token\":\"$TU\"}" | j .message
+echo "activar:"; rpc cs_admin_set_lists_public "{\"p_code\":\"$CODE2\",\"p_token\":\"$ADM2\",\"p_on\":true}" | j .event.lists_public
+echo "Uno ve a:"; rpc cs_group_wishes "{\"p_token\":\"$TU\"}" | j ".map(x=>x.name).join(', ')"
+echo "sin parejas en la respuesta:"; rpc cs_group_wishes "{\"p_token\":\"$TU\"}" | grep -c receiver

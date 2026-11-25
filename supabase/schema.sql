@@ -37,6 +37,10 @@ do $$ begin
   alter table public.cs_events add constraint cs_events_draw_mode_check check (draw_mode in ('app','manual'));
 exception when duplicate_object then null; end $$;
 
+-- Si el organizador lo activa, todos ven las listas de todos aunque la app haga el sorteo
+-- (ver listas no revela quién le regala a quién).
+alter table public.cs_events add column if not exists lists_public boolean not null default false;
+
 create table if not exists public.cs_participants (
   id              uuid primary key default gen_random_uuid(),
   event_id        uuid not null references public.cs_events(id) on delete cascade,
@@ -148,7 +152,7 @@ language sql stable as $$
   select json_build_object(
     'code', e.code, 'name', e.name, 'budget', e.budget, 'currency', e.currency,
     'exchange_date', e.exchange_date, 'note', e.note, 'drawn', e.drawn_at is not null,
-    'drawn_at', e.drawn_at, 'draw_mode', e.draw_mode)
+    'drawn_at', e.drawn_at, 'draw_mode', e.draw_mode, 'lists_public', e.lists_public)
 $$;
 
 -- ───────────────────────── Organizador ─────────────────────────
@@ -251,6 +255,16 @@ begin
     raise exception 'La app ya hizo el sorteo. Deshazlo antes de cambiar a sorteo a mano.' using errcode = 'P0001';
   end if;
   update cs_events set draw_mode = p_mode where id = e.id;
+  return cs_admin_get(p_code, p_token);
+end $$;
+
+create or replace function public.cs_admin_set_lists_public(p_code text, p_token text, p_on boolean)
+returns json
+language plpgsql security definer set search_path = public, extensions as $$
+declare e cs_events;
+begin
+  e := cs__admin_event(p_code, p_token);
+  update cs_events set lists_public = coalesce(p_on, false) where id = e.id;
   return cs_admin_get(p_code, p_token);
 end $$;
 
@@ -475,15 +489,16 @@ begin
   return cs_me(p_token);
 end $$;
 
--- Grupos con sorteo a mano: cada participante (con su sesión) ve las listas de todos los demás.
+-- Grupos con sorteo a mano, o con "listas para todos" activado: cada participante (con su sesión)
+-- ve las listas de todos los demás. Nunca devuelve parejas del sorteo.
 create or replace function public.cs_group_wishes(p_token text) returns json
 language plpgsql volatile security definer set search_path = public, extensions as $$
 declare p cs_participants; e cs_events;
 begin
   p := cs__session(p_token);
   select * into e from cs_events where id = p.event_id;
-  if e.draw_mode <> 'manual' then
-    raise exception 'En este grupo el sorteo es secreto: solo ves la lista de quien te tocó.' using errcode = 'P0001';
+  if e.draw_mode <> 'manual' and not e.lists_public then
+    raise exception 'En este grupo solo ves la lista de quien te tocó.' using errcode = 'P0001';
   end if;
   return (
     select coalesce(json_agg(json_build_object('id', o.id, 'name', o.name, 'wishes', cs__wishes_json(o.id))
@@ -555,6 +570,7 @@ grant execute on function
   public.cs_admin_get(text, text),
   public.cs_admin_update_event(text, text, text, numeric, text, date, text),
   public.cs_admin_set_draw_mode(text, text, text),
+  public.cs_admin_set_lists_public(text, text, boolean),
   public.cs_group_wishes(text),
   public.cs_admin_add_participant(text, text, text),
   public.cs_admin_remove_participant(text, text, uuid),

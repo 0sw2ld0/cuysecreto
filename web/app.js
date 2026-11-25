@@ -373,6 +373,13 @@ async function viewAdmin(code, token) {
         </div>
       </details>`}
 
+      ${ev.draw_mode === "manual" ? "" : `
+      <div class="panel switch-row">
+        <div><b>Todos ven las listas de todos</b>
+          <span>Cada uno podrá ver qué quieren los demás. El sorteo sigue secreto.</span></div>
+        <button class="switch" role="switch" aria-checked="${ev.lists_public}" aria-label="Todos ven las listas de todos" data-act="lists-public"><span></span></button>
+      </div>`}
+
       <section class="draw-box">
         ${ev.draw_mode === "manual" ? `
           <div class="hang"><div class="tag">
@@ -427,6 +434,7 @@ async function viewAdmin(code, token) {
       if (act === "draw-no") { confirmDraw = false; paint(); }
       if (act === "draw-yes") { confirmDraw = false; call("cs_admin_draw", {}, b, "¡Sorteo hecho!"); }
       if (act === "undo") call("cs_admin_undo_draw", {}, b, "Sorteo deshecho");
+      if (act === "lists-public") call("cs_admin_set_lists_public", { p_on: !ev.lists_public }, null, ev.lists_public ? "Cada uno verá solo la lista de quien le tocó" : "Ahora todos ven las listas de todos");
       if (act === "mode-manual") call("cs_admin_set_draw_mode", { p_mode: "manual" }, b, "Listo: cada uno verá las listas de todos");
       if (act === "mode-app") call("cs_admin_set_draw_mode", { p_mode: "app" }, b, "Ahora la app hará el sorteo");
     };
@@ -579,7 +587,8 @@ async function viewMe(code) {
   let giftTo = null; // a quién le regalo (sorteo a mano): solo se guarda en este celular
   try { giftTo = localStorage.getItem(GIFT_KEY); } catch { /* modo privado */ }
   let group = [];
-  const loadGroup = async () => { group = isManual() ? await rpc("cs_group_wishes", { p_token: sess.token }) : []; };
+  const seesAll = () => isManual() || data.event.lists_public;
+  const loadGroup = async () => { group = seesAll() ? await rpc("cs_group_wishes", { p_token: sess.token }) : []; };
   try { await loadGroup(); } catch { group = []; }
   if (giftTo && !group.some((g) => g.id === giftTo)) giftTo = null;
   let viewing = giftTo;
@@ -664,7 +673,7 @@ async function viewMe(code) {
         ${group.map((g) => `<button class="pick ${sel && g.id === sel.id ? "on" : ""}" data-view="${g.id}" aria-pressed="${sel && g.id === sel.id}">${g.id === giftTo ? icon("gift") : ""}<span>${esc(g.name)}</span><small>${g.wishes.length}</small></button>`).join("")}
       </div>
       ${sel ? `<div class="pick-head"><h3 class="hand">${esc(sel.name)}</h3>
-          <button class="btn btn-sm ${sel.id === giftTo ? "btn-ghost" : "btn-light"}" data-act="gift-to" data-id="${sel.id}">${sel.id === giftTo ? "Ya no le regalo" : `${icon("gift")} Le regalo yo`}</button></div>
+          ${manual ? `<button class="btn btn-sm ${sel.id === giftTo ? "btn-ghost" : "btn-light"}" data-act="gift-to" data-id="${sel.id}">${sel.id === giftTo ? "Ya no le regalo" : `${icon("gift")} Le regalo yo`}</button>` : ""}</div>
         ${sel.wishes.length ? `<div class="wishes">${sel.wishes.map((w) => wishRow(w, ev, false)).join("")}</div>`
           : `<div class="empty"><b>${esc(sel.name)} todavía no arma su lista</b>Vuelve en unos días; aquí aparecerán sus deseos con tienda y precio.</div>`}` : ""}`
       : `<div class="empty"><b>Todavía no hay nadie más</b>Cuando el organizador agregue a los demás, aquí verás sus listas.</div>`;
@@ -709,12 +718,13 @@ async function viewMe(code) {
           <button role="tab" id="t-mine" aria-controls="p-list" aria-selected="${tab === "mine"}" data-tab="mine">Mi lista</button>
         </div>
         <section id="p-list" role="tabpanel" aria-labelledby="${tab === "group" ? "t-group" : "t-mine"}">${tab === "group" ? groupList : myList}</section>`
-      : flipped ? `
-        <div class="tabs" role="tablist" aria-label="Listas de deseos">
-          <button role="tab" id="t-them" aria-controls="p-list" aria-selected="${tab === "them"}" data-tab="them">Lista de ${esc(r.name)}</button>
+      : flipped || ev.lists_public ? `
+        <div class="tabs ${flipped && ev.lists_public ? "three" : ""}" role="tablist" aria-label="Listas de deseos">
+          ${flipped ? `<button role="tab" id="t-them" aria-controls="p-list" aria-selected="${tab === "them"}" data-tab="them">${ev.lists_public ? esc(r.name) : `Lista de ${esc(r.name)}`}</button>` : ""}
+          ${ev.lists_public ? `<button role="tab" id="t-group" aria-controls="p-list" aria-selected="${tab === "group"}" data-tab="group">Todos</button>` : ""}
           <button role="tab" id="t-mine" aria-controls="p-list" aria-selected="${tab === "mine"}" data-tab="mine">Mi lista</button>
         </div>
-        <section id="p-list" role="tabpanel" aria-labelledby="${tab === "them" ? "t-them" : "t-mine"}">${tab === "them" ? theirList : myList}</section>`
+        <section id="p-list" role="tabpanel" aria-labelledby="t-${tab}">${tab === "them" && flipped ? theirList : tab === "group" && ev.lists_public ? groupList : myList}</section>`
       : `<h2 class="sec">Mi lista de deseos <small>${wishes.length ? `${wishes.length} ${wishes.length === 1 ? "deseo" : "deseos"}` : ""}</small></h2>${myList}`}
 
       <details class="more">
