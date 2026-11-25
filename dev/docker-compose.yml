@@ -1,0 +1,19 @@
+# Entorno local que imita la API RPC de Supabase (Postgres + PostgREST). Solo para desarrollo.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: dev
+    ports: ["54329:5432"]
+    volumes:
+      - ./00-roles.sql:/docker-entrypoint-initdb.d/00-roles.sql:ro
+      - ../supabase/schema.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+  api:
+    image: postgrest/postgrest:v12.2.3
+    depends_on: [db]
+    environment:
+      PGRST_DB_URI: postgres://authenticator:dev@db:5432/postgres
+      PGRST_DB_SCHEMAS: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_SERVER_CORS_ALLOWED_ORIGINS: "*"
+    ports: ["54321:3000"]

@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-25T16:00:00-05:00",
+  "title": "Design System: CuySecreto",
+  "extensions": {
+    "colorMeta": {
+      "paper":         { "role": "primary",   "displayName": "Papel Cobalto",            "canonical": "#1f3fd0", "tonalRamp": ["#0b1650", "#11227a", "#1532a8", "#1f3fd0", "#4a64e0", "#7f93eb", "#b5c1f5", "#e3e8fd"] },
+      "paper-deep":    { "role": "primary",   "displayName": "Cobalto Pliegue",          "canonical": "#1532a8", "tonalRamp": ["#091340", "#0e1f6a", "#12298a", "#1532a8", "#3f58c4", "#7487da", "#adb9ec", "#e0e5fa"] },
+      "paper-ink":     { "role": "primary",   "displayName": "Bruma Cobalto",            "canonical": "#c9d3ff", "tonalRamp": ["#2a3366", "#414c8c", "#5d68ad", "#7f8acc", "#a2ade6", "#c9d3ff", "#dfe5ff", "#f2f4ff"] },
+      "ribbon":        { "role": "secondary", "displayName": "Cinta Fucsia",             "canonical": "#ff3d8b", "tonalRamp": ["#4d0723", "#7a0d3a", "#a81253", "#d81468", "#ff3d8b", "#ff78ad", "#ffb3d0", "#ffe6f0"] },
+      "ribbon-strong": { "role": "secondary", "displayName": "Cinta Fucsia Intensa",     "canonical": "#d81468", "tonalRamp": ["#45061f", "#700a33", "#9a0e48", "#b80f57", "#d81468", "#f0549a", "#f9a3c6", "#fde3ee"] },
+      "ribbon-press":  { "role": "secondary", "displayName": "Cinta Fucsia Presionada",  "canonical": "#b80f57", "tonalRamp": ["#3b051b", "#5e082c", "#850c3e", "#b80f57", "#d8397d", "#ec77a8", "#f6b5d0", "#fce6ef"] },
+      "gold":          { "role": "tertiary",  "displayName": "Dorado de Precio",         "canonical": "#ffc93c", "tonalRamp": ["#4a3300", "#755200", "#9a6a00", "#d19a10", "#ffc93c", "#ffd970", "#ffe9a8", "#fff6dc"] },
+      "gold-soft":     { "role": "tertiary",  "displayName": "Dorado Suave",             "canonical": "#fff1c7", "tonalRamp": ["#5c4a14", "#857025", "#ad9640", "#d4bd66", "#f0dc95", "#fff1c7", "#fff7df", "#fffcf2"] },
+      "tag":           { "role": "neutral",   "displayName": "Cartulina",                "canonical": "#ffffff", "tonalRamp": ["#10142b", "#2e3452", "#474e70", "#7d83a3", "#b6bbd2", "#dfe3f3", "#eef0f8", "#ffffff"] },
+      "tag-edge":      { "role": "neutral",   "displayName": "Canto de Cartulina",       "canonical": "#dfe3f3", "tonalRamp": ["#1c2140", "#353c62", "#545c85", "#7c84a8", "#a8afcb", "#dfe3f3", "#eef0f8", "#f8f9fd"] },
+      "tag-wash":      { "role": "neutral",   "displayName": "Lavado de Cartulina",      "canonical": "#eef0f8", "tonalRamp": ["#1c2140", "#353c62", "#545c85", "#7c84a8", "#b6bbd2", "#dfe3f3", "#eef0f8", "#fafbfe"] },
+      "ink":           { "role": "neutral",   "displayName": "Tinta Noche",              "canonical": "#10142b", "tonalRamp": ["#06081a", "#10142b", "#232947", "#3a4166", "#5c6488", "#8b92b0", "#bfc4d9", "#eceef6"] },
+      "ink-2":         { "role": "neutral",   "displayName": "Tinta Gris",               "canonical": "#474e70", "tonalRamp": ["#141830", "#262b4a", "#363d5e", "#474e70", "#666d8e", "#8e94b0", "#bcc0d4", "#eceef6"] },
+      "ok":            { "role": "neutral",   "displayName": "Verde Listo",              "canonical": "#157a4a", "tonalRamp": ["#05281a", "#0b4329", "#105e39", "#157a4a", "#3a9a6b", "#74bd96", "#b2dcc4", "#dcf3e6"] },
+      "ok-soft":       { "role": "neutral",   "displayName": "Verde Listo Suave",        "canonical": "#dcf3e6", "tonalRamp": ["#0b4329", "#157a4a", "#3a9a6b", "#74bd96", "#a6d6bb", "#dcf3e6", "#ecf9f2", "#f7fdf9"] },
+      "danger":        { "role": "neutral",   "displayName": "Rojo Alerta",              "canonical": "#c0262d", "tonalRamp": ["#3d0a0d", "#661216", "#8f1a20", "#c0262d", "#d9585d", "#ea8f92", "#f5c3c4", "#fde4e4"] },
+      "danger-soft":   { "role": "neutral",   "displayName": "Rojo Alerta Suave",        "canonical": "#fde4e4", "tonalRamp": ["#661216", "#c0262d", "#d9585d", "#ea8f92", "#f5c3c4", "#fde4e4", "#fef1f1", "#fffafa"] }
+    },
+    "typographyMeta": {
+      "display":       { "displayName": "Display",           "purpose": "Solo el titular de inicio, blanco sobre el papel." },
+      "headline":      { "displayName": "Headline",          "purpose": "Nombre del evento o título de vista sobre el papel." },
+      "title":         { "displayName": "Title",             "purpose": "Títulos de sección sobre el papel, con contador a la derecha." },
+      "tag-title":     { "displayName": "Tag Title",         "purpose": "Título dentro de una etiqueta." },
+      "body":          { "displayName": "Body",              "purpose": "Texto corrido; 18px desde 700px. Lead limitado a 34ch." },
+      "label":         { "displayName": "Label",             "purpose": "Solo rótulos en mayúsculas de la franja segmentada del evento." },
+      "hand-name":     { "displayName": "Nombre a mano",     "purpose": "Nombres de personas sobre la línea Para/De y en listas." },
+      "hand-name-big": { "displayName": "Nombre a mano grande", "purpose": "El nombre de 'Para:' en la etiqueta colgante y la revelación." },
+      "hand-price":    { "displayName": "Precio a mano",     "purpose": "Placa de precio dorada." }
+    },
+    "shadows": [
+      { "name": "etiqueta-colgante", "value": "0 10px 24px -8px rgba(0,0,0,.45), 0 2px 4px rgba(0,0,0,.18)", "purpose": "Etiquetas, confirmaciones en línea y toast." },
+      { "name": "cartulina-apoyada", "value": "0 4px 10px -4px rgba(0,0,0,.35)", "purpose": "Paneles, franja segmentada, botones de nombre, botón claro, pestaña seleccionada." },
+      { "name": "sombra-de-cuelgue", "value": "drop-shadow(0 10px 14px rgba(0,0,0,.28))", "purpose": "filter sobre el contenedor colgante y la lista de deseos para respetar el recorte de esquinas." },
+      { "name": "boton-primario", "value": "0 8px 18px -8px rgba(0,0,0,.45)", "purpose": "Levanta la cinta de acción." },
+      { "name": "foco-campo", "value": "0 0 0 4px rgba(31,63,208,.15)", "purpose": "Halo de foco de los campos, con borde cobalto." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(.16, 1, .3, 1)", "purpose": "Curva única para entradas, presión, volteo y toast." },
+      { "name": "press", "value": "transform .15s ease-out; scale(.98)", "purpose": "Presión de botones (nombres: .97)." },
+      { "name": "view-in", "value": "420ms ease-out; opacity 0 → 1, translateY(10px) → 0", "purpose": "Entrada de cada vista." },
+      { "name": "tag-flip", "value": "transform .9s ease-out; rotateY(180deg); perspective 1200px", "purpose": "Revelación de la etiqueta Para/De." },
+      { "name": "string-swing", "value": "1.6s ease-out; rotate 0 → 4° → -2.5° → 1° → -1°, origen arriba al centro", "purpose": "Balanceo amortiguado de la pita al revelar." },
+      { "name": "pin-shake", "value": ".4s; translateX ±8px", "purpose": "PIN incorrecto." },
+      { "name": "reduced-motion", "value": "duraciones a .01ms; volteo sin transición", "purpose": "prefers-reduced-motion: cambio instantáneo." }
+    ],
+    "breakpoints": [
+      { "name": "md", "value": "700px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botón primario",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "La cinta: el único siguiente paso de la vista, normalmente de ancho completo.",
+      "html": "<button class=\"ds-btn-primary\">Entrar a mi grupo</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 12px 20px; border: 0; border-radius: 14px; background: var(--ribbon-strong, #d81468); color: #fff; font-family: Archivo, system-ui, sans-serif; font-weight: 800; font-size: 18px; box-shadow: 0 8px 18px -8px rgba(0,0,0,.45); cursor: pointer; transition: transform .15s cubic-bezier(.16,1,.3,1), background-color .15s; } .ds-btn-primary:hover { background: var(--ribbon-press, #b80f57); } .ds-btn-primary:active { transform: scale(.98); } .ds-btn-primary:focus-visible { outline: 3px solid var(--gold, #ffc93c); outline-offset: 2px; }"
+    },
+    {
+      "name": "Botón fantasma",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Acción secundaria sobre el papel cobalto.",
+      "html": "<div class=\"ds-paper\"><button class=\"ds-btn-ghost\">Crear un amigo secreto</button></div>",
+      "css": ".ds-paper { background: var(--paper, #1f3fd0); padding: 16px; } .ds-btn-ghost { min-height: 52px; padding: 12px 20px; border: 0; border-radius: 14px; background: transparent; color: #fff; font-family: Archivo, system-ui, sans-serif; font-weight: 800; font-size: 18px; box-shadow: inset 0 0 0 2px rgba(255,255,255,.55); cursor: pointer; transition: box-shadow .15s, transform .15s cubic-bezier(.16,1,.3,1); } .ds-btn-ghost:hover { box-shadow: inset 0 0 0 2px #fff; } .ds-btn-ghost:active { transform: scale(.98); } .ds-btn-ghost:focus-visible { outline: 3px solid var(--gold, #ffc93c); outline-offset: 2px; }"
+    },
+    {
+      "name": "Campo",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo de texto sobre cartulina con rótulo encima.",
+      "html": "<label class=\"ds-field\"><span>Nombre del regalo</span><input class=\"ds-input\" placeholder=\"Audífonos inalámbricos\"></label>",
+      "css": ".ds-field { display: grid; gap: 6px; font-family: Archivo, system-ui, sans-serif; } .ds-field > span { font-size: 14px; font-weight: 700; color: var(--ink, #10142b); } .ds-input { width: 100%; min-height: 50px; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--tag-edge, #dfe3f3); background: #fff; color: var(--ink, #10142b); font: inherit; font-size: 17px; transition: border-color .15s, box-shadow .15s; } .ds-input::placeholder { color: #7d83a3; } .ds-input:hover { border-color: #c4cae3; } .ds-input:focus-visible, .ds-input:focus { outline: none; border-color: var(--paper, #1f3fd0); box-shadow: 0 0 0 4px rgba(31,63,208,.15); }"
+    },
+    {
+      "name": "Barra con código",
+      "kind": "nav",
+      "refersTo": "code-pill",
+      "description": "Barra pegajosa: marca a la izquierda, código del grupo en píldora a la derecha.",
+      "html": "<header class=\"ds-bar\"><a class=\"ds-brand\" href=\"#\">CuySecreto</a><a class=\"ds-pill\" href=\"#\">CUY-7K2QP</a></header>",
+      "css": ".ds-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; background: color-mix(in srgb, var(--paper, #1f3fd0) 88%, transparent); backdrop-filter: saturate(1.4) blur(10px); font-family: Archivo, system-ui, sans-serif; color: #fff; } .ds-brand { color: #fff; text-decoration: none; font-weight: 800; font-stretch: 78%; font-size: 21px; } .ds-pill { display: inline-flex; align-items: center; min-height: 36px; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.16); color: #fff; text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: .04em; font-variant-numeric: tabular-nums; } .ds-pill:hover, .ds-pill:active { background: rgba(255,255,255,.26); } .ds-brand:focus-visible, .ds-pill:focus-visible { outline: 3px solid var(--gold, #ffc93c); outline-offset: 2px; border-radius: 6px; }"
+    },
+    {
+      "name": "Ficha de estado",
+      "kind": "chip",
+      "refersTo": "status-chip-on",
+      "description": "Estado por persona en el panel del organizador; cambia en su fila sin mover la grilla.",
+      "html": "<span class=\"ds-st ds-st-on\">Entró</span> <span class=\"ds-st\">Sin lista</span> <span class=\"ds-st ds-st-warn\">Bloqueado</span>",
+      "css": ".ds-st { display: inline-flex; align-items: center; gap: 4px; min-height: 24px; padding: 2px 8px; border-radius: 999px; font-family: Archivo, system-ui, sans-serif; font-size: 12px; font-weight: 800; background: var(--tag-wash, #eef0f8); color: var(--ink-2, #474e70); } .ds-st-on { background: var(--ok-soft, #dcf3e6); color: var(--ok, #157a4a); } .ds-st-warn { background: var(--danger-soft, #fde4e4); color: var(--danger, #c0262d); }"
+    },
+    {
+      "name": "Etiqueta Para/De",
+      "kind": "card",
+      "refersTo": "tag-card",
+      "description": "La tarjeta de trabajo: cartulina con esquinas superiores cortadas, ojal y nombre escrito a mano.",
+      "html": "<div class=\"ds-paper\"><div class=\"ds-tag\"><p class=\"ds-line\"><span class=\"ds-printed\">De:</span> <span class=\"ds-hand\">Rosa</span></p><p class=\"ds-line\"><span class=\"ds-printed\">Para:</span> <span class=\"ds-hand ds-big ds-q\">¿ ? ? ?</span></p></div></div>",
+      "css": ".ds-paper { background: var(--paper, #1f3fd0); padding: 24px 16px; } .ds-tag { position: relative; background: #fff; color: var(--ink, #10142b); border-radius: 10px; padding: 44px 20px 20px; box-shadow: 0 10px 24px -8px rgba(0,0,0,.45), 0 2px 4px rgba(0,0,0,.18); clip-path: polygon(30px 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 0 100%, 0 30px); transition: transform .2s cubic-bezier(.16,1,.3,1); } .ds-tag:hover { transform: rotate(-1deg); } .ds-tag::before { content: \"\"; position: absolute; top: 12px; left: 50%; width: 18px; height: 18px; margin-left: -9px; border-radius: 50%; background: var(--paper, #1f3fd0); box-shadow: 0 0 0 4px var(--gold, #ffc93c); } .ds-line { display: flex; align-items: baseline; gap: 10px; margin: 0 0 12px; padding-bottom: 2px; border-bottom: 2px solid var(--ink, #10142b); } .ds-printed { font-family: Kalam, cursive; font-size: 20px; color: var(--ink-2, #474e70); } .ds-hand { font-family: Kalam, cursive; font-weight: 700; font-size: 30px; line-height: 1.15; } .ds-big { font-size: 48px; line-height: 1.05; } .ds-q { color: var(--paper, #1f3fd0); letter-spacing: .08em; }"
+    },
+    {
+      "name": "Franja segmentada",
+      "kind": "custom",
+      "refersTo": "segment-strip",
+      "description": "Datos del evento como tarjeta de embarque: rótulo pequeño y cifra tabular.",
+      "html": "<div class=\"ds-seg\"><div><small>Presupuesto</small><b>S/ 80</b></div><div><small>Intercambio</small><b>24 dic</b></div><div><small>Grupo</small><b>9</b></div></div>",
+      "css": ".ds-seg { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); background: #fff; color: var(--ink, #10142b); border-radius: 12px; box-shadow: 0 4px 10px -4px rgba(0,0,0,.35); overflow: hidden; font-family: Archivo, system-ui, sans-serif; } .ds-seg > div { padding: 10px 12px; border-right: 1.5px dashed var(--tag-edge, #dfe3f3); min-width: 0; } .ds-seg > div:last-child { border-right: 0; } .ds-seg small { display: block; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2, #474e70); } .ds-seg b { display: block; font-size: 17px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }"
+    },
+    {
+      "name": "Fila de deseo con placa de precio",
+      "kind": "card",
+      "refersTo": "price-plate",
+      "description": "Etiqueta pequeña de la lista de deseos con placa dorada de precio escrita a mano.",
+      "html": "<div class=\"ds-paper\"><article class=\"ds-wish\"><div class=\"ds-wish-title\">Polo de la selección, talla M</div><div class=\"ds-price\">S/ 79</div><div class=\"ds-wish-meta\">Falabella · Lo que más quiero</div></article></div>",
+      "css": ".ds-paper { background: var(--paper, #1f3fd0); padding: 16px; } .ds-wish { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: start; padding: 16px 16px 16px 40px; background: #fff; color: var(--ink, #10142b); border-radius: 8px; clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%); font-family: Archivo, system-ui, sans-serif; } .ds-wish::before { content: \"\"; position: absolute; left: 13px; top: 21px; width: 12px; height: 12px; border-radius: 50%; background: var(--paper, #1f3fd0); box-shadow: 0 0 0 3px var(--gold, #ffc93c); } .ds-wish-title { font-weight: 800; font-size: 18px; line-height: 1.2; } .ds-price { margin: 6px 8px 0 0; font-family: Kalam, cursive; font-weight: 700; font-size: 22px; line-height: 1; padding: 6px 10px 4px; border-radius: 8px; background: var(--gold, #ffc93c); color: var(--ink, #10142b); font-variant-numeric: tabular-nums; white-space: nowrap; transform: rotate(2deg); transition: transform .2s cubic-bezier(.16,1,.3,1); } .ds-wish:hover .ds-price { transform: rotate(0deg); } .ds-wish-meta { grid-column: 1 / -1; color: var(--ink-2, #474e70); font-size: 15px; }"
+    },
+    {
+      "name": "Pestañas segmentadas",
+      "kind": "nav",
+      "refersTo": "tab-selected",
+      "description": "Control de dos opciones sobre el papel (mi lista / su lista).",
+      "html": "<div class=\"ds-paper\"><div class=\"ds-tabs\" role=\"tablist\"><button role=\"tab\" aria-selected=\"true\">Su lista</button><button role=\"tab\" aria-selected=\"false\">Mi lista</button></div></div>",
+      "css": ".ds-paper { background: var(--paper, #1f3fd0); padding: 16px; } .ds-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: rgba(0,0,0,.18); border-radius: 14px; font-family: Archivo, system-ui, sans-serif; } .ds-tabs button { min-height: 46px; border: 0; border-radius: 10px; background: transparent; color: var(--paper-ink, #c9d3ff); font: inherit; font-weight: 800; font-size: 15px; cursor: pointer; } .ds-tabs button:hover { color: #fff; } .ds-tabs button[aria-selected=\"true\"] { background: #fff; color: var(--ink, #10142b); box-shadow: 0 4px 10px -4px rgba(0,0,0,.35); } .ds-tabs button:focus-visible { outline: 3px solid var(--gold, #ffc93c); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Papel de regalo y etiqueta Para/De",
+    "overview": "Cada pantalla es un regalo envuelto. El papel cobalto es la cáscara de la app: llena todo el fondo, con un estampado fino de puntos blancos y dorados casi imperceptible, y nunca se interrumpe. Encima cuelgan etiquetas de cartulina blanca con las esquinas superiores cortadas y un ojal, y en ellas sucede todo el trabajo: entrar con el código, armar la lista, ver a quién te tocó. Lo impreso habla en Archivo condensado; lo escrito por una persona (nombres, precios) va en Kalam, como si alguien lo hubiera llenado con plumón.\n\nLa densidad es de celular y de pulgar: una columna de 540px como máximo, objetivos táctiles de 44px o más, texto base de 17px y una sola acción fucsia por pantalla. La cinta fucsia es a la vez la pita de donde cuelga la etiqueta y el botón del siguiente paso; el dorado marca precio y estado, como señalética. El momento firma es el volteo 3D de la etiqueta «Para: ¿???» que revela el nombre, con un leve balanceo de la pita.\n\nEl sistema rechaza la app blanca con rojo y verde navideño, los copos de nieve y los emojis de regalo: la Navidad está en el material (papel, cinta, etiqueta), no en clip art.",
+    "keyCharacteristics": [
+      "Fondo cobalto continuo con estampado de puntos; nada de fondos blancos a pantalla completa.",
+      "Etiquetas blancas con esquinas superiores cortadas y ojal cobalto con anillo dorado como tarjeta de trabajo.",
+      "Archivo condensado (ancho 72–85%) para títulos; Kalam para nombres y placas de precio.",
+      "Fucsia = acción primaria y pita; dorado = precio, estado y foco.",
+      "Cifras tabulares en todo dato numérico (presupuesto, código, precio, PIN).",
+      "Volteo 3D de la etiqueta como revelación; fundido con movimiento reducido."
+    ],
+    "rules": [
+      { "name": "The Una Sola Cinta Rule", "body": "El fucsia intenso de acción aparece en un único botón primario por vista: el siguiente paso. El resto de acciones son claras o fantasma.", "section": "colors" },
+      { "name": "The Dorado Es Precio Rule", "body": "El dorado lleno se reserva para placas de precio, el ojal y el foco. No se usa como fondo de botones ni de bloques grandes; para avisos se usa el dorado suave.", "section": "colors" },
+      { "name": "The Cinta Decorativa Rule", "body": "El fucsia brillante (ribbon) nunca lleva texto blanco encima; para texto sobre fucsia se usa siempre la versión intensa.", "section": "colors" },
+      { "name": "The Impreso y Escrito Rule", "body": "Kalam solo para nombres de personas, precios, «Para/De» y los dígitos del PIN. Nunca para botones, títulos ni párrafos.", "section": "typography" },
+      { "name": "The Cifra Tabular Rule", "body": "Todo número que se compara o se copia (presupuesto, grupo, código, precio, PIN, contadores) usa cifras tabulares.", "section": "typography" },
+      { "name": "The Siguiente Paso Rule", "body": "Cada vista lleva una sola decisión principal, como botón fucsia de ancho completo dentro o justo debajo de la etiqueta.", "section": "layout" },
+      { "name": "The Fila Quieta Rule", "body": "Los estados cambian dentro de su fila (fichas de estado, contadores) sin mover la grilla.", "section": "layout" },
+      { "name": "The Todo Blanco Flota Rule", "body": "Ninguna superficie blanca se apoya sin sombra sobre el papel; ninguna superficie sobre el papel es cobalto con sombra.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do poner todo el trabajo dentro de etiquetas o paneles de cartulina sobre el papel cobalto.",
+      "Do usar un solo botón fucsia intenso (#d81468) por vista, de ancho completo, para el siguiente paso.",
+      "Do escribir nombres de personas y precios en Kalam 700, y todo lo demás en Archivo.",
+      "Do usar Archivo condensado (ancho 72–85%, 800) para títulos.",
+      "Do mostrar cifras tabulares en presupuesto, código, precio, PIN y contadores.",
+      "Do mantener objetivos táctiles de 44px o más (botones de 52px, campos de 50px).",
+      "Do acompañar todo estado de color con texto o icono.",
+      "Do usar foco dorado de 3px sobre el papel y fucsia intenso dentro de superficies blancas.",
+      "Do respetar prefers-reduced-motion: el volteo y el balanceo se vuelven un cambio instantáneo."
+    ],
+    "donts": [
+      "Don't usar fondos blancos a pantalla completa ni la combinación navideña rojo/verde.",
+      "Don't usar copos de nieve, emojis de regalo ni clip art navideño; la Navidad está en el papel, la cinta y la etiqueta.",
+      "Don't poner texto blanco sobre el fucsia brillante (#ff3d8b); ese tono es solo pita y decoración.",
+      "Don't usar el dorado lleno como fondo de botones o bloques grandes.",
+      "Don't usar Kalam en botones, títulos o párrafos.",
+      "Don't apoyar una superficie blanca sobre el papel sin sombra.",
+      "Don't añadir rótulos en mayúsculas sobre los títulos de sección; las mayúsculas espaciadas existen solo en los rótulos de la franja segmentada."
+    ]
+  }
+}
