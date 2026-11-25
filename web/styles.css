@@ -338,7 +338,7 @@ details.more[open] summary::before { content: "–"; }
 
 /* Sorteo a mano: elegir de quién ver la lista */
 .prio-pick.two { grid-template-columns: 1fr 1fr; }
-.mode-hint { display: block; margin-top: 8px; font-size: 14px; color: var(--ink-2); }
+.field > .mode-hint, .mode-hint { display: block; font-weight: 500; margin-top: 8px; font-size: 14px; color: var(--ink-2); }
 .people-pick { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
 .pick { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 10px 8px 14px; border: 0; border-radius: 999px; background: rgba(255,255,255,.14); color: #fff; font-weight: 700; font-size: 16px; }
 .pick small { min-width: 24px; height: 24px; padding: 0 6px; border-radius: 999px; display: inline-grid; place-items: center; background: rgba(0,0,0,.2); font-size: 13px; font-variant-numeric: tabular-nums; }
